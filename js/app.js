@@ -2,7 +2,7 @@
 
 // ***** GLOBAL VARIABLES *****
 
-let voteCount = 10;
+let voteCount = 25;
 let allProducts = [];
 
 // ***** DOM REFERENCES *****
@@ -46,22 +46,74 @@ new Product('unicorn');
 new Product('water-can');
 new Product('wine-glass');
 
-
 // ***** HELPER FUNCTIONS / EXECUTABLE CODE *****
+
+// got from w3resources
+function getRandomImage(){
+  return Math.floor(Math.random()*allProducts.length);
+}
 
 function renderImgs(){
 
-  imgOne.src = allProducts[0].photo;
-  imgTwo.src = allProducts[1].photo;
-  imgThree.src = allProducts[2].photo;
+  let productImageOne = getRandomImage();
+  let productImageTwo = getRandomImage();
+  let productImageThree = getRandomImage();
+
+  while(productImageOne === productImageTwo || productImageOne === productImageThree || productImageTwo === productImageThree){
+    productImageTwo = getRandomImage();
+    productImageThree = getRandomImage();
+    // while(productImageThree === productImageOne || productImageTwo){
+    //   productImageThree = getRandomImage();
+    // }
+  }
+
+  imgOne.src = allProducts[productImageOne].photo;
+  imgOne.alt = allProducts[productImageOne].name;
+  allProducts[productImageOne].views++;
+
+  imgTwo.src = allProducts[productImageTwo].photo;
+  imgTwo.alt = allProducts[productImageTwo].name;
+  allProducts[productImageTwo].views++;
+
+  imgThree.src = allProducts[productImageThree].photo;
+  imgThree.alt = allProducts[productImageThree].name;
+  allProducts[productImageThree].views++;
 }
 
 renderImgs();
 
 // ***** EVENT HANDLERS *****
 
+function handleClick(event){
+  voteCount--;
 
+  let imgClicked = event.target.alt;
+
+  for(let i = 0; i < allProducts.length; i++){
+    if(imgClicked === allProducts[i].name){
+      allProducts[i].votes++;
+    }
+  }
+
+  renderImgs();
+
+  if(voteCount === 0){
+    imgContainer.removeEventListener('click', handleClick);
+  }
+
+}
+
+function handleShowResults(){
+  if(voteCount === 0){
+    for(let i = 0; i < allProducts.length; i++){
+      let liElement = document.createElement('li');
+      liElement.textContent = `${allProducts[i].name} had ${allProducts[i].votes} votes, and was seen ${allProducts[i].views} times.`;
+      resultsList.appendChild(liElement);
+    }
+  }
+}
 
 // ***** EVENT LISTENERS *****
 
-
+imgContainer.addEventListener('click', handleClick);
+resultsBtn.addEventListener('click', handleShowResults);
