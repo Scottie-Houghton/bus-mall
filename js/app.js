@@ -54,16 +54,22 @@ function getRandomImage(){
   return Math.floor(Math.random()*allProducts.length);
 }
 
+let imageArray = [];
+
 function renderImgs(){
 
-  let productImageOne = getRandomImage();
-  let productImageTwo = getRandomImage();
-  let productImageThree = getRandomImage();
-
-  while(productImageOne === productImageTwo || productImageOne === productImageThree || productImageTwo === productImageThree){
-    productImageTwo = getRandomImage();
-    productImageThree = getRandomImage();
+  while(imageArray.length < 6){
+    let randomNumber = getRandomImage();
+    if(!imageArray.includes(randomNumber)){
+      imageArray.push(randomNumber);
+    }
   }
+
+  console.log(imageArray);
+
+  let productImageOne = imageArray.shift();
+  let productImageTwo = imageArray.shift();
+  let productImageThree = imageArray.shift();
 
   imgOne.src = allProducts[productImageOne].photo;
   imgOne.alt = allProducts[productImageOne].name;
