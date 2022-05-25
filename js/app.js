@@ -27,25 +27,33 @@ function Product(name, fileExtension = 'jpg'){
   allProducts.push(this);
 }
 
-new Product('bag');
-new Product('banana');
-new Product('bathroom');
-new Product('boots');
-new Product('breakfast');
-new Product('bubblegum');
-new Product('chair');
-new Product('cthulhu');
-new Product('dog-duck');
-new Product('dragon');
-new Product('pen');
-new Product('pet-sweep');
-new Product('scissors');
-new Product('shark');
-new Product('sweep', 'png');
-new Product('tauntaun');
-new Product('unicorn');
-new Product('water-can');
-new Product('wine-glass');
+let retrievedProducts = localStorage.getItem('products');
+
+let parsedProducts = JSON.parse(retrievedProducts);
+
+if(retrievedProducts){
+  allProducts = parsedProducts;
+} else{
+  new Product('bag');
+  new Product('banana');
+  new Product('bathroom');
+  new Product('boots');
+  new Product('breakfast');
+  new Product('bubblegum');
+  new Product('chair');
+  new Product('cthulhu');
+  new Product('dog-duck');
+  new Product('dragon');
+  new Product('pen');
+  new Product('pet-sweep');
+  new Product('scissors');
+  new Product('shark');
+  new Product('sweep', 'png');
+  new Product('tauntaun');
+  new Product('unicorn');
+  new Product('water-can');
+  new Product('wine-glass');
+}
 
 // ***** HELPER FUNCTIONS / EXECUTABLE CODE *****
 
@@ -64,8 +72,6 @@ function renderImgs(){
       imageArray.push(randomNumber);
     }
   }
-
-  console.log(imageArray);
 
   let productImageOne = imageArray.shift();
   let productImageTwo = imageArray.shift();
@@ -176,6 +182,11 @@ function handleClick(event){
 
   if(voteCount === 0){
     imgContainer.removeEventListener('click', handleClick);
+
+    let stringifiedProducts = JSON.stringify(allProducts);
+
+    localStorage.setItem('products', stringifiedProducts);
+
     renderChart();
   }
 
