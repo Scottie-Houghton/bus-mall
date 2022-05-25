@@ -12,8 +12,9 @@ let imgOne = document.getElementById('img-one');
 let imgTwo = document.getElementById('img-two');
 let imgThree = document.getElementById('img-three');
 
-let resultsBtn = document.getElementById('results-btn');
-let resultsList = document.getElementById('results-list');
+// ***** CANVAS REFERENCE *****
+
+let ctx = document.getElementById('my-chart').getContext('2d');
 
 // ***** CONSTRUCTOR *****
 
@@ -53,19 +54,22 @@ function getRandomImage(){
   return Math.floor(Math.random()*allProducts.length);
 }
 
+let imageArray = [];
+
 function renderImgs(){
 
-  let productImageOne = getRandomImage();
-  let productImageTwo = getRandomImage();
-  let productImageThree = getRandomImage();
-
-  while(productImageOne === productImageTwo || productImageOne === productImageThree || productImageTwo === productImageThree){
-    productImageTwo = getRandomImage();
-    productImageThree = getRandomImage();
-    // while(productImageThree === productImageOne || productImageTwo){
-    //   productImageThree = getRandomImage();
-    // }
+  while(imageArray.length < 6){
+    let randomNumber = getRandomImage();
+    if(!imageArray.includes(randomNumber)){
+      imageArray.push(randomNumber);
+    }
   }
+
+  console.log(imageArray);
+
+  let productImageOne = imageArray.shift();
+  let productImageTwo = imageArray.shift();
+  let productImageThree = imageArray.shift();
 
   imgOne.src = allProducts[productImageOne].photo;
   imgOne.alt = allProducts[productImageOne].name;
@@ -81,6 +85,79 @@ function renderImgs(){
 }
 
 renderImgs();
+
+// ***** FUNCTION TO RENDER CHART *****
+
+function renderChart(){
+  let productNames = [];
+  let productVotes = [];
+  let productViews = [];
+
+  for(let i = 0; i < allProducts.length; i++){
+    productNames.push(allProducts[i].name);
+    productVotes.push(allProducts[i].votes);
+    productViews.push(allProducts[i].views);
+  }
+
+  let myChartObj = {
+    type: 'bar',
+    data: {
+      labels: productNames,
+      datasets: [{
+        label: '# of Votes',
+        data: productVotes,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: '# of Views',
+        data: productViews,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  new Chart(ctx, myChartObj);
+
+}
 
 // ***** EVENT HANDLERS *****
 
@@ -99,21 +176,11 @@ function handleClick(event){
 
   if(voteCount === 0){
     imgContainer.removeEventListener('click', handleClick);
+    renderChart();
   }
 
-}
-
-function handleShowResults(){
-  if(voteCount === 0){
-    for(let i = 0; i < allProducts.length; i++){
-      let liElement = document.createElement('li');
-      liElement.textContent = `${allProducts[i].name} had ${allProducts[i].votes} votes, and was seen ${allProducts[i].views} times.`;
-      resultsList.appendChild(liElement);
-    }
-  }
 }
 
 // ***** EVENT LISTENERS *****
 
 imgContainer.addEventListener('click', handleClick);
-resultsBtn.addEventListener('click', handleShowResults);
